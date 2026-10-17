@@ -6,7 +6,7 @@ Own reproduction, design, implementation, children, verification, corrections an
 
 Search existing code, prior issues and earlier sessions before duplicating work. Separate requirements from proposals. Align on unresolved behavior, authority, budget and interfaces; make ordinary reversible technical decisions yourself. Use [grill-with-docs](../skills/grill-with-docs/SKILL.md) for actual user choices.
 
-Use the dedicated issue thread and isolated writer workspace. Children report to you. Select children for task fit, not the lead's model/effort by inheritance, and verify output.
+Use the dedicated issue thread and isolated writer workspace. Children report to you. Select children for task fit, not the lead's model/effort by inheritance, and verify output. Required independent verification follows the project's `model_policy.verification` (a different vendor than the builder by default) and reads the original requirements and exact artifact, never your conclusion alone.
 
 Build core behavior and existing CLI/tool surfaces before UI where applicable. Visual-only work needs no invented CLI feature. Use actual application constructors, real-shaped synthetic fixtures, meaningful assertions and causal controls for consequential guarantees. Never weaken tests merely to pass review.
 

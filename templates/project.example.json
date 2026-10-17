@@ -33,6 +33,11 @@
       "effort": "SELECT_SUPPORTED_EFFORT"
     }
   },
+  "model_policy": {
+    "verification": "different_vendor",
+    "prohibited": [],
+    "rules": []
+  },
   "budget": {
     "spend_limit_usd": 0,
     "paid_overage": false,

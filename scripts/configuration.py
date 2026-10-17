@@ -2,6 +2,7 @@
 import copy
 import math
 import re
+import unicodedata
 
 MIN_COOLDOWN = 5 * 60 * 60
 
@@ -17,7 +18,7 @@ def validate(config, *, draft=False):
     if not isinstance(config, dict):
         raise ValueError("configuration must be an object")
     required = {"schema_version", "status", "name", "goal", "success", "github_repository", "primary_branch", "integration_branch", "requirements_path", "glossary_path", "test_environment", "commands", "models", "budget", "authority", "human_ux_acceptance_required", "skills"}
-    if not required <= set(config) or set(config) - required - {"swarm"} or config.get("schema_version") != 1 or config.get("status") != ("draft" if draft else "confirmed"):
+    if not required <= set(config) or set(config) - required - {"swarm", "model_policy"} or config.get("schema_version") != 1 or config.get("status") != ("draft" if draft else "confirmed"):
         raise ValueError("use the exact v1 configuration and confirm setup first")
     for field in ["name", "goal", "success", "github_repository", "primary_branch", "integration_branch", "test_environment"]:
         value = config[field]
@@ -54,9 +55,45 @@ def validate(config, *, draft=False):
         validate_options(config.get("swarm", {}), draft=draft)
     if not isinstance(config["models"], dict) or set(config["models"]) != {"frontend", "backend", "review"}:
         raise ValueError("select frontend/backend/review models from the live host")
-    for model in config["models"].values():
-        if not isinstance(model, dict) or set(model) != {"provider", "model", "effort"} or any(not isinstance(v, str) or not v.strip() or (not draft and "SELECT_" in v) for v in model.values()):
-            raise ValueError("model IDs and efforts must be resolved")
+    if not all(valid_model(model, draft) for model in config["models"].values()):
+        raise ValueError("model IDs and efforts must be resolved")
+    if "model_policy" in config:
+        validate_model_policy(config["model_policy"], config["models"], draft=draft)
+
+
+def valid_model(model, draft):
+    return isinstance(model, dict) and set(model) == {"provider", "model", "effort"} and all(isinstance(v, str) and v.strip() and (draft or "SELECT_" not in v) for v in model.values())
+
+
+def policy_text(value, draft):
+    """One short printable line with no control or bidi characters; placeholders only in a draft."""
+    return isinstance(value, str) and bool(value.strip()) and len(value) <= 500 and all(unicodedata.category(c) not in {"Cc", "Cf", "Zl", "Zp"} for c in value) and (draft or not re.search(r"REPLACE_|SELECT_", value))
+
+
+def model_key(text):
+    return re.sub(r"[\s_]+", "-", text.strip().lower())
+
+
+def validate_model_policy(policy, models, *, draft=False):
+    """Optional role, child-tier, verification and prohibition choices made during setup."""
+    allowed = {"roles", "children", "verification", "prohibited", "rules"}
+    if not isinstance(policy, dict) or set(policy) - allowed:
+        raise ValueError("model_policy may hold roles, children, verification, prohibited and rules")
+    if not isinstance(policy.get("verification", "different_vendor"), str) or policy.get("verification", "different_vendor") not in {"different_vendor", "any"}:
+        raise ValueError("model_policy.verification must be different_vendor or any")
+    chosen = list(models.values())
+    for key, names in [("roles", {"orchestrator", "debugging", "other"}), ("children", {"bounded", "simple", "rote", "strong"})]:
+        group = policy.get(key, {})
+        if not isinstance(group, dict) or set(group) - names or not all(valid_model(m, draft) for m in group.values()):
+            raise ValueError("model_policy." + key + " must name only " + "/".join(sorted(names)) + " with resolved provider, model and effort")
+        chosen += list(group.values())
+    for key in ("prohibited", "rules"):
+        items = policy.get(key, [])
+        if not isinstance(items, list) or len(items) > 50 or not all(policy_text(i, draft) for i in items) or len({model_key(i) for i in items}) != len(items):
+            raise ValueError("model_policy." + key + " must be at most 50 unique printable single-line strings of at most 500 characters")
+    banned = {model_key(i) for i in policy.get("prohibited", [])}
+    if any({model_key(m["model"]), model_key(m["provider"] + "/" + m["model"])} & banned for m in chosen):
+        raise ValueError("a prohibited model is selected for a role, child tier or review")
 
 
 def normalise_config(config):

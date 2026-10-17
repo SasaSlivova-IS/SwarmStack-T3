@@ -4,7 +4,7 @@
 
 Fifteen behavioral tests and the static checker pass. Three independent read-only initial reviews returned Spec PASS, Standards PASS with one Minor and Security PASS with the same Minor. The implementer validated the finding, added a failing-before I/O fault control and corrected it. A fresh narrow independent review resolved both axes with no new findings.
 
-[Separate sanitised reports](reviews/source-reviews.json) retain the findings and correction verdicts. Original revision mappings are kept locally; public notes do not expose private-project context or pointers to removed history.
+[Separate sanitised reports](reviews/source-reviews.json) retain the findings and correction verdicts.
 
 ## Actual checks
 
@@ -28,4 +28,4 @@ The final publishable main history is checked again after these reports are comm
 
 No live AA model ranking, provider/model evaluation, global installation, existing-project changes or cross-platform native compatibility is claimed. The optional GitHub workflow is a manual-dispatch template under templates/github/check.yml; it is not installed or run. Host skill discovery and any project runtime remain explicit adoption checks. The installer is not transactional or designed for hostile concurrent writers; a failed apply may leave disclosed partial setup.
 
-Sol 6.1 Medium performed the reviews because cross-project instruction/install authority has overwrite/publication consequences, and the available Claude allowance is reserved for frontend work. No capacity purchase or provider benchmark call was made.
+No capacity purchase or provider benchmark call was made.

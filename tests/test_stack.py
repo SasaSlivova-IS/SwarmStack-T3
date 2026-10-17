@@ -201,6 +201,36 @@ class Stack(unittest.TestCase):
         self.assertEqual(stack.report(self.project, True)["state"], "incomplete")
         path.write_text(json.dumps(original))
 
+    def test_model_policy_selects_roles_tiers_and_prohibitions_during_setup(self):
+        import configuration
+        model = {"provider": "fixture", "model": "fixture", "effort": "medium"}
+        data = config()
+        data["model_policy"] = {"verification": "different_vendor", "roles": {"orchestrator": model}, "children": {"bounded": model, "rote": model}, "prohibited": ["banned"], "rules": ["No unapproved spending."]}
+        configuration.validate(data)
+        for bad in [{"verification": "same"}, {"roles": {"judge": model}}, {"children": {"bounded": {"provider": "fixture"}}}, {"prohibited": ["x", "x"]}, {"rules": ["two\nlines"]}, {"extra": 1}, {"prohibited": ["fixture"]}]:
+            broken = copy.deepcopy(data)
+            broken["model_policy"] = bad
+            with self.assertRaises(ValueError, msg=str(bad)):
+                configuration.validate(broken)
+        for bad in [{"verification": []}, {"prohibited": [" fixture "], "roles": {"orchestrator": model}}, {"prohibited": ["fixture/fixture"], "roles": {"orchestrator": model}}, {"prohibited": ["FIXTURE"], "children": {"rote": model}}, {"prohibited": ["x", " X"]}, {"rules": ["bad\u202etext"]}, {"rules": ["x" * 501]}, {"rules": ["REPLACE_ME"]}, {"rules": ["a"] * 2}]:
+            broken = copy.deepcopy(data)
+            broken["model_policy"] = bad
+            with self.assertRaises(ValueError, msg=str(bad)):
+                configuration.validate(broken)
+        spaced = copy.deepcopy(data)
+        spaced["models"]["frontend"]["model"] = "Banned Model"
+        spaced["model_policy"] = {"prohibited": ["banned-model"]}
+        with self.assertRaises(ValueError):
+            configuration.validate(spaced)
+        data["model_policy"]["prohibited"] = ["other"]
+        draft = copy.deepcopy(data)
+        draft.update(status="draft")
+        draft["authority"] = {k: False for k in draft["authority"]}
+        draft["model_policy"]["children"]["simple"] = {"provider": "SELECT_FROM_LIVE_HOST", "model": "SELECT_FROM_LIVE_HOST", "effort": "SELECT_SUPPORTED_EFFORT"}
+        configuration.validate(draft, draft=True)
+        with self.assertRaises(ValueError):
+            configuration.validate({**data, "model_policy": draft["model_policy"]})
+
     def test_optional_host_metadata_is_validated_even_without_swarm_skill(self):
         path = self.project / ".swarmstack/project.json"
         original = json.loads(path.read_text())

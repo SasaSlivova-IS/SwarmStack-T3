@@ -20,8 +20,8 @@ Use [grill-with-docs](skills/grill-with-docs/references/procedure.md): explanati
 | Workflow | Primary/integration branches, issue branches/worktrees, review/merge/closure rules. |
 | Tracking | Milestones, board columns, sub-issue use and where evidence is stored ([tracking](guides/tracking.md)). |
 | Authority | Thread/branch creation, pushing, PRs, integration, promotion, deployment and real-data limits. |
-| Models | Live host catalogue, chosen role models/efforts, subscriptions, data restrictions and budget. |
-| Communication | Green channels, brevity, decision batching, escalation, actual Root/host binding and swarm cooldowns. |
+| Models | Live host catalogue; models/efforts for frontend, backend and review; optionally orchestrator, debugging and other roles and the child tiers (bounded, simple, rote, strong); the verification rule (`different_vendor`, the default, or `any`); prohibited models and other usage rules; subscriptions, data restrictions and budget. Record them in `models` and `model_policy`. |
+| Communication | User-facing channels, brevity, decision batching, escalation, actual orchestrator/host binding and swarm cooldowns. |
 
 ### Example question, not an accepted default
 
