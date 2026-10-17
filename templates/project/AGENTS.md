@@ -10,7 +10,7 @@ Load only your role: [orchestrator](.swarmstack/guides/orchestrator.md), [fronte
 
 Continue complete authorised outcomes through checks, review and corrections. A child PASS, source review or merged slice is not issue Done. Required checks, resolved findings, agreed integration and required human acceptance determine closure. Escalate real blockers, not routine next steps.
 
-Read [models](.swarmstack/guides/models.md) only for intake/delegation and [review](.swarmstack/guides/review.md) at submission. Keep temporary limits in the task and requirements/terminology in their owning project files.
+Read [models](.swarmstack/guides/models.md) only for intake/delegation and [review](.swarmstack/guides/review.md) at submission. Load [communication](.swarmstack/guides/communication.md) when coordinating or delegating, [verification](.swarmstack/guides/verification.md) when checking work, [records](.swarmstack/guides/records.md) before changing shared records, and [implementation](.swarmstack/guides/implementation.md), [integration](.swarmstack/guides/integration.md) or [UI testing](.swarmstack/guides/ui-testing.md) for those subagent tasks. Keep temporary limits in the task and requirements/terminology in their owning project files.
 
 <!-- swarm:start -->
 Use [swarm](.agents/skills/swarm/SKILL.md) only for user-facing commands and normal pending-command checkpoints.
