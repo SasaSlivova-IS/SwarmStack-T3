@@ -12,24 +12,22 @@ Settling is organisation and bloat removal, and it is reversible: any thread can
 
 ## 1. Read (no changes)
 
-Use `t3_thread_list` on the confirmed project (50 per page, newest update first). Filter to `settled=false` and statuses that are not running, starting or waiting, then cover all of them or about 300 threads, whichever comes first. Reading the candidates may be split across a few read-only helpers; keep their results out of the final text. For each candidate read the end of the thread (its last messages), plus `t3_pending_request_list` and `t3_queue_list`.
+Scope: only **top-level threads of the project** (`parentThreadId` empty) that are unsettled and not archived. These are the threads in the user's sidebar. Helper, reviewer and other child threads never appear there, so never list them. Use `t3_thread_list` on the confirmed project (50 per page, newest update first) and keep paging until the unsettled top-level threads stop appearing, then read each one. Reading may be split across a few read-only helpers; keep their results out of the final text. For each thread read the end of it (its last messages), plus `t3_pending_request_list`, `t3_queue_list` and its children.
 
-Put a thread in **Can settle now** when all of these hold:
+Settling is reversible organisation, so the user decides. Sort each thread into one group:
 
-1. Not running, waiting, queued or starting, and not snoozed.
-2. No pending request, no queued message and no running child.
-3. Its last message is a finished result, hand-off or superseded round, not a question or offer waiting on the user.
-4. No open decision, hold or unfinished check belongs to it. A finished child counts as done when its parent has shown later activity or recorded the result. An idle helper with no named hold counts as not running.
-5. It is not a standing role thread: the orchestrator, a user-facing chat, or a lead whose issue is still open.
+- **Looks finished (Done):** its last run finished, nothing is running, queued or pending, and it is not waiting on the user. Say plainly in the reason what is still open, for example that its issue or pull request is unfinished, so the user can judge. A lead whose issue is still open can sit here; the reason must say so.
+- **Maybe, your call:** finished-looking but waiting on someone else's decision, hold or hand-off, or with a running child.
+- **Kept:** running or working, queued messages or a pending request, waiting on the user, or a standing role (the orchestrator and the user-facing chats).
 
-Put a thread in **Maybe, your call** when it is finished-looking but one thing is unclear, for example whether the parent took in the result. Everything else is **Kept**. A missing pull request is not a reason to settle. Take each reason from what the thread says; never invent one.
+A missing pull request is not a reason to settle. Take each reason from what the thread says; never invent one.
 
 ## 2. Show the page
 
 Check it once with `html_preview`, then `html_render` with `page-template.html`. The page is the main table plus a short maybe list, nothing else:
 
-- **Can settle now:** thread title, a reason of two or three short sentences (what it delivered, what closed it, why nothing is waiting on it), last update. Checkboxes, unchecked.
-- **Maybe, your call:** same shape, reason of two short sentences (what is finished and what is unclear), unchecked.
+- **Looks finished:** thread title, a reason of two or three short sentences (what it delivered, what is still open on it, whether anything is waiting on it), last update. Checkboxes, unchecked.
+- **Maybe, your call:** same shape, reason of two short sentences (what is finished and what it waits on), unchecked.
 - **Kept:** only a closed line with the count and the groups.
 
 No long sentences, no per-thread reasons for kept threads, no list of deviations or open questions on the page. After the page write at most two short lines: the counts, and how many threads you covered. Put any problem with the skill itself in one line, only if it changed the result. If `html_render` is unavailable, give the same two tables as Markdown.
