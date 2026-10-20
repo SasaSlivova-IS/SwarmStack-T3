@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box}body{font-family:var(--font-sans);color:var(--foreground);font-size:14px}
+.bar{display:flex;gap:8px;align-items:center;margin:0 0 10px;flex-wrap:wrap}
+button{font:inherit;border:1px solid var(--border);background:var(--card);color:var(--card-foreground);padding:6px 12px;border-radius:var(--radius);cursor:pointer}
+button.primary{background:var(--primary);color:var(--primary-foreground);border-color:transparent}
+button:disabled{opacity:.45;cursor:default}
+table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--muted-foreground);font-weight:500;font-size:12px;padding:6px 8px;border-bottom:1px solid var(--border)}
+td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top}tr:hover td{background:var(--accent-surface)}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;background:var(--warning-surface);color:var(--warning)}
+.muted{color:var(--muted-foreground)}h3{margin:18px 0 6px;font-size:13px;font-weight:600}
+#out{display:none;width:100%;height:110px;margin-top:8px;background:var(--code-background);color:var(--code-foreground);border:1px solid var(--border);border-radius:var(--radius);padding:8px;font-family:var(--font-mono);font-size:12px}
+#msg{color:var(--muted-foreground);font-size:12px}
+</style></head><body>
+<div class="bar"><button id="all">Select all</button><button id="none">Clear</button>
+<button class="primary" id="copy" disabled>Copy selection (0)</button><button id="dl" disabled>Download .txt</button><span id="msg"></span></div>
+<h3>Can settle now</h3>
+<table id="t"><thead><tr><th></th><th>Thread</th><th>Why it can be settled</th><th>Updated</th></tr></thead><tbody>
+<!-- ROWS_SETTLE: one <tr> per thread, escaped text:
+<tr><td><input type="checkbox" data-id="THREAD_ID" data-t="TITLE"></td><td>TITLE</td><td>REASON</td><td class="muted">HH:MM</td></tr> -->
+</tbody></table>
+<h3>Keep, and why</h3>
+<table><tbody>
+<!-- ROWS_KEEP: <tr><td style="width:28px"></td><td>TITLE</td><td><span class="tag">keep</span> FAILING CHECK</td><td class="muted">HH:MM</td></tr> -->
+</tbody></table>
+<h3>Not sure</h3>
+<table><tbody>
+<!-- ROWS_UNSURE: <tr><td style="width:28px"></td><td>TITLE</td><td>WHAT COULD NOT BE READ</td><td class="muted">HH:MM</td></tr> -->
+</tbody></table>
+<textarea id="out" readonly></textarea>
+<script>
+const boxes=[...document.querySelectorAll('#t input')];const copy=document.getElementById('copy'),dl=document.getElementById('dl'),msg=document.getElementById('msg'),out=document.getElementById('out');
+const sel=()=>boxes.filter(b=>b.checked);
+const text=()=>"Please settle these threads (chosen in /can-settle). Do it yourself and record what you settled:\n"+sel().map(b=>"- "+b.dataset.t+" ["+b.dataset.id+"]").join("\n");
+function upd(){const n=sel().length;copy.textContent="Copy selection ("+n+")";copy.disabled=dl.disabled=n===0}
+boxes.forEach(b=>b.onchange=upd);
+document.getElementById('all').onclick=()=>{boxes.forEach(b=>b.checked=true);upd()};
+document.getElementById('none').onclick=()=>{boxes.forEach(b=>b.checked=false);upd()};
+copy.onclick=async()=>{const t=text();try{await navigator.clipboard.writeText(t);msg.textContent="Copied. Paste it in the chat."}catch(e){out.style.display='block';out.value=t;out.select();msg.textContent="Select and copy the text below."}};
+dl.onclick=()=>{try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text()],{type:'text/plain'}));a.download='settle-selection.txt';a.click()}catch(e){msg.textContent="Download blocked here; use Copy."}};
+</script></body></html>
