@@ -6,7 +6,7 @@ import unicodedata
 
 MIN_COOLDOWN = 5 * 60 * 60
 
-SKILLS = {"grill-with-docs", "code-review", "delivery", "adhd-output", "unslop", "swarm", "loose-ends", "swarmstack"}
+SKILLS = {"grill-with-docs", "code-review", "delivery", "adhd-output", "unslop", "swarm", "loose-ends", "swarmstack", "can-settle"}
 AUTHORITY = {"create_threads", "create_branches", "push_issue_branches", "open_prs", "merge_integration", "promote_production", "deploy"}
 
 
@@ -18,7 +18,7 @@ def validate(config, *, draft=False):
     if not isinstance(config, dict):
         raise ValueError("configuration must be an object")
     required = {"schema_version", "status", "name", "goal", "success", "github_repository", "primary_branch", "integration_branch", "requirements_path", "glossary_path", "test_environment", "commands", "models", "budget", "authority", "human_ux_acceptance_required", "skills"}
-    if not required <= set(config) or set(config) - required - {"swarm", "model_policy"} or config.get("schema_version") != 1 or config.get("status") != ("draft" if draft else "confirmed"):
+    if not required <= set(config) or set(config) - required - {"swarm", "model_policy", "workspace_policy"} or config.get("schema_version") != 1 or config.get("status") != ("draft" if draft else "confirmed"):
         raise ValueError("use the exact v1 configuration and confirm setup first")
     for field in ["name", "goal", "success", "github_repository", "primary_branch", "integration_branch", "test_environment"]:
         value = config[field]
@@ -59,6 +59,19 @@ def validate(config, *, draft=False):
         raise ValueError("model IDs and efforts must be resolved")
     if "model_policy" in config:
         validate_model_policy(config["model_policy"], config["models"], draft=draft)
+    if "workspace_policy" in config:
+        validate_workspace_policy(config["workspace_policy"])
+
+
+WORKSPACE_FLAGS = {"per_task_scratch", "outside_effects_check", "tool_cleanup_exception"}
+
+
+def validate_workspace_policy(policy):
+    """Optional setup checkboxes for child scratch directories, outside-effects checks and tool cleanup."""
+    if not isinstance(policy, dict) or set(policy) != WORKSPACE_FLAGS or not all(type(v) is bool for v in policy.values()):
+        raise ValueError("workspace_policy must set per_task_scratch, outside_effects_check and tool_cleanup_exception to true or false")
+    if policy["tool_cleanup_exception"] and not (policy["per_task_scratch"] and policy["outside_effects_check"]):
+        raise ValueError("tool_cleanup_exception requires per_task_scratch and outside_effects_check")
 
 
 def valid_model(model, draft):

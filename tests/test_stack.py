@@ -231,6 +231,64 @@ class Stack(unittest.TestCase):
         with self.assertRaises(ValueError):
             configuration.validate({**data, "model_policy": draft["model_policy"]})
 
+    def test_workspace_policy_checkboxes_and_conditional_tool_cleanup_guide(self):
+        import configuration
+        data = config()
+        self.assertEqual(data["workspace_policy"], {"per_task_scratch": True, "outside_effects_check": True, "tool_cleanup_exception": False})
+        configuration.validate(data)
+        for bad in [{"per_task_scratch": True}, {"per_task_scratch": 1, "outside_effects_check": True, "tool_cleanup_exception": False}, {"per_task_scratch": True, "outside_effects_check": True, "tool_cleanup_exception": "yes"}, {"per_task_scratch": True, "outside_effects_check": True, "tool_cleanup_exception": False, "extra": True}, {"per_task_scratch": False, "outside_effects_check": True, "tool_cleanup_exception": True}, {"per_task_scratch": True, "outside_effects_check": False, "tool_cleanup_exception": True}, None]:
+            broken = copy.deepcopy(data)
+            broken["workspace_policy"] = bad
+            with self.assertRaises(ValueError, msg=str(bad)):
+                configuration.validate(broken)
+        off = bootstrap.render_outputs(data)
+        self.assertIn(".swarmstack/guides/workspace.md", off)
+        self.assertNotIn(".swarmstack/guides/tool-cleanup.md", off)
+        enabled = copy.deepcopy(data)
+        enabled["workspace_policy"]["tool_cleanup_exception"] = True
+        on = bootstrap.render_outputs(enabled)
+        self.assertIn(".swarmstack/guides/tool-cleanup.md", on)
+        text = lambda outputs: outputs[".swarmstack/guides/workspace.md"].decode()
+        self.assertIn("Per-task scratch directories", text(off))
+        self.assertIn("Outside-effects check", text(off))
+        self.assertNotIn("Tool cleanup exception", text(off))
+        self.assertNotIn("workspace:", text(off))
+        self.assertNotIn("workspace:", text(on))
+        self.assertIn("Tool cleanup exception", text(on))
+        no_scratch = copy.deepcopy(data)
+        no_scratch["workspace_policy"].update(per_task_scratch=False)
+        self.assertNotIn("Per-task scratch directories", text(bootstrap.render_outputs(no_scratch)))
+        no_effects = copy.deepcopy(data)
+        no_effects["workspace_policy"].update(outside_effects_check=False)
+        self.assertNotIn("Outside-effects check", text(bootstrap.render_outputs(no_effects)))
+        for outputs in (off, on):
+            for name, body in outputs.items():
+                if name.startswith(".swarmstack/guides/") and name.endswith(".md"):
+                    for target in __import__("re").findall(r"\]\(([A-Za-z0-9_-]+\.md)\)", body.decode()):
+                        self.assertIn(".swarmstack/guides/" + target, outputs, name + " links to a missing guide: " + target)
+        legacy = copy.deepcopy(data)
+        del legacy["workspace_policy"]
+        configuration.validate(legacy)
+        self.assertNotIn(".swarmstack/guides/tool-cleanup.md", bootstrap.render_outputs(legacy))
+
+    def test_workspace_flag_flip_plans_remove_and_conflicts_on_local_edit(self):
+        cfg = self.project / ".swarmstack/project.json"
+        data = json.loads(cfg.read_text())
+        data["workspace_policy"]["tool_cleanup_exception"] = True
+        cfg.write_text(json.dumps(data, indent=2) + "\n")
+        proposal, _ = update.plan(self.project)
+        self.assertIn(("add", ".swarmstack/guides/tool-cleanup.md"), [(c["action"], c["path"]) for c in proposal["changes"]])
+        update.apply(self.project, proposal["approval_id"])
+        guide = self.project / ".swarmstack/guides/tool-cleanup.md"
+        self.assertTrue(guide.exists())
+        data["workspace_policy"]["tool_cleanup_exception"] = False
+        cfg.write_text(json.dumps(data, indent=2) + "\n")
+        proposal, _ = update.plan(self.project)
+        self.assertIn(("remove", ".swarmstack/guides/tool-cleanup.md"), [(c["action"], c["path"]) for c in proposal["changes"]])
+        guide.write_text(guide.read_text() + "local note\n")
+        locked, _ = update.plan(self.project)
+        self.assertTrue(locked["conflicts"] or locked["preserved"])
+
     def test_optional_host_metadata_is_validated_even_without_swarm_skill(self):
         path = self.project / ".swarmstack/project.json"
         original = json.loads(path.read_text())

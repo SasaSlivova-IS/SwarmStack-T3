@@ -38,6 +38,11 @@
     "prohibited": [],
     "rules": []
   },
+  "workspace_policy": {
+    "per_task_scratch": true,
+    "outside_effects_check": true,
+    "tool_cleanup_exception": false
+  },
   "budget": {
     "spend_limit_usd": 0,
     "paid_overage": false,
@@ -61,6 +66,7 @@
     "unslop",
     "swarm",
     "loose-ends",
+    "can-settle",
     "swarmstack"
   ],
   "swarm": {

@@ -37,7 +37,7 @@ Before escalating, check requirements, issue records, decisions and code. Apply 
 
 Use the host's supported asynchronous delegation and keep task IDs. Let completion notify the parent; read status when needed without polling or duplicate watchers. Start each delegated review round as a fresh task with the original brief and unresolved findings. Use the host's supported event notifications; a push alone is not a promised wake. Reuse an authorised scheduled check rather than adding watchers.
 
-API metadata can contain credentials. Request only the fields you need and allowlist them before any retained or model-visible output; never dump whole repository, session or account objects. If sensitive data appears unexpectedly, stop further effects, keep the original in restricted custody, send only a secret-free incident summary, and never forward the value or a reversible encoding. Do not test or change credentials without authority.
+API metadata can contain credentials. Request only the fields you need and allowlist them before any retained or model-visible output; never dump whole repository, session or account objects. If sensitive data appears unexpectedly, stop further effects, keep the original in restricted custody, send only a secret-free incident summary, and never forward the value or a reversible encoding. Do not test or change credentials without authority. Never dump the process environment (`env`, `printenv`, `set`, `export -p`, process or session dumps): agent environments carry access tokens. Check a named variable's presence instead of printing it, read only the names you need, and never print a value.
 
 Use focused tool output:
 

@@ -21,6 +21,7 @@ Use [grill-with-docs](skills/grill-with-docs/references/procedure.md): explanati
 | Tracking | Milestones, board columns, sub-issue use and where evidence is stored ([tracking](guides/tracking.md)). |
 | Authority | Thread/branch creation, pushing, PRs, integration, promotion, deployment and real-data limits. |
 | Models | Live host catalogue; models/efforts for frontend, backend and review; optionally orchestrator, debugging and other roles and the child tiers (bounded, simple, rote, strong); the verification rule (`different_vendor`, the default, or `any`); prohibited models and other usage rules; subscriptions, data restrictions and budget. Record them in `models` and `model_policy`. |
+| Workspace | Checkboxes in `workspace_policy`: per-task scratch directories (`per_task_scratch`), a post-task outside-effects check (`outside_effects_check`), and whether deterministic tools may clean up files they created themselves inside their own scratch directory (`tool_cleanup_exception`, off by default; it needs the other two on, and enabling it installs `guides/tool-cleanup.md`). The first two default to on. A switched-off part is left out of the installed workspace guide. See [workspace](guides/workspace.md). |
 | Communication | User-facing channels, brevity, decision batching, escalation, actual orchestrator/host binding and swarm cooldowns. |
 
 ### Example question, not an accepted default

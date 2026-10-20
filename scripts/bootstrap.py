@@ -33,6 +33,11 @@ def optional_swarm(body, enabled):
     return re.sub(pattern, lambda match: match[1].strip() if enabled else "", body, flags=re.S)
 
 
+def optional_workspace(body, name, enabled):
+    pattern = r"<!-- workspace:" + name + r":start -->\n?(.*?)<!-- workspace:" + name + r":end -->\n?"
+    return re.sub(pattern, lambda match: match[1] if enabled else "", body, flags=re.S)
+
+
 def render_outputs(config, *, installation_only=False, skill_hosts=None):
     config = normalise_config(config)
     validate(config, draft=installation_only)
@@ -50,8 +55,13 @@ def render_outputs(config, *, installation_only=False, skill_hosts=None):
     add(".swarmstack/state.md", "# Current project state\n\nSetup adopted; project behavior is not yet qualified. Root records issue owners, pins, blockers, next actions and evidence here.\n")
     add(".swarmstack/decisions.md", "# Accepted setup\n\nThe user-confirmed project.json is the setup decision. Record future accepted changes and unresolved questions here; installation is not runtime acceptance.\n")
     add("docs/agents/issue-tracker.md", "# Issue tracker\n\nGitHub repository: " + config["github_repository"] + "\n\nRead issues with the host connector or gh issue view NUMBER --repo " + config["github_repository"] + ". Use full accepted scope and relevant comments, not only titles. Posting, closing and merging require project authority. One dedicated thread per issue.\n")
+    workspace = {"per_task_scratch": True, "outside_effects_check": True, "tool_cleanup_exception": False, **config.get("workspace_policy", {})}
     for src in sorted((ROOT / "guides").glob("*.md")):
+        if src.name == "tool-cleanup.md" and not workspace["tool_cleanup_exception"]:
+            continue
         body = optional_swarm(src.read_text(), uses_swarm).replace("../skills/", "../../.agents/skills/")
+        if src.name == "workspace.md":
+            body = optional_workspace(optional_workspace(optional_workspace(body, "scratch", workspace["per_task_scratch"]), "effects", workspace["outside_effects_check"]), "cleanup", workspace["tool_cleanup_exception"])
         add(".swarmstack/guides/" + src.name, body)
     setup = (ROOT / "SETUP.md").read_text().replace("](skills/", "](../.agents/skills/")
     add(".swarmstack/SETUP.md", setup)

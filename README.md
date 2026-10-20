@@ -1,4 +1,6 @@
-# SwarmStack
+# SwarmStack (T3 Code fork)
+
+This fork is for T3 Code. It adds `/can-settle`, which is not in the portable SwarmStack. Everything else follows the portable toolkit.
 
 SwarmStack is a set of instructions, skills and small Python scripts for running a team of AI coding agents on one project. One orchestrator hands each GitHub issue to its own lead agent. The lead builds the change, tests it and fixes review findings. You get asked only when a decision is actually yours to make.
 
@@ -11,7 +13,7 @@ Install the skills in a project first, then use `/swarmstack setup` to configure
 1. **Role guides** for the orchestrator, issue tracking, issue leads (frontend, backend, debugging, other work), user-facing chats, reviewers and child agents. See [guides/](guides).
 2. **Thread rules:** one orchestrator, one dedicated lead and thread per issue, colour-coded roles and a separate workspace for each writer.
 3. **Model selection guidance**, plus an offline script that compares models on quality, cost and speed and drops any option that another one beats on every count.
-4. **Skills:** interview the user before decisions ([grill-with-docs](skills/grill-with-docs/SKILL.md)), review code ([code-review](skills/code-review/SKILL.md)), set up a project, submit finished work, write short, plain replies, and find loose ends ([loose-ends](skills/loose-ends/SKILL.md)).
+4. **Skills:** interview the user before decisions ([grill-with-docs](skills/grill-with-docs/SKILL.md)), review code ([code-review](skills/code-review/SKILL.md)), set up a project, submit finished work, write short, plain replies, find loose ends ([loose-ends](skills/loose-ends/SKILL.md)), and see which threads are finished and can be settled ([can-settle](skills/can-settle/SKILL.md)).
 5. **GitHub templates** for [pull requests](.github/pull_request_template.md), [bug reports](.github/ISSUE_TEMPLATE/bug.yml) and [feature requests](.github/ISSUE_TEMPLATE/feature.yml). Each one starts with the problem, not the solution.
 6. **An installer** that shows you every file it plans to write, and refuses to overwrite anything that already exists.
 
@@ -35,6 +37,8 @@ Changes of direction (backend, frontend, issue link and auto) are limited to one
 A small Python script keeps track of these commands in a local SQLite file, so the limit survives chat restarts. It doesn't send messages or run as a service. Before relying on it, read the [command contract](skills/swarm/references/commands.md) and [what has been verified](docs/swarm-verification.md).
 
 Lost track? `/loose-ends cover` goes back through the current conversation and lists unanswered questions, offers nobody confirmed, contradictions and missing pieces. `/loose-ends catchup` catches you up on the whole project after time away, and `/loose-ends good morning` covers the night since your last message. Neither changes anything; open decisions come back as A–D questions.
+
+Too many finished threads? `/can-settle` lists which threads can be settled and which should stay, with a reason for each. It only reports; settling happens only after you say yes.
 
 Before leaving, use `/swarm night` for an overnight handoff. Root keeps questions in your chat and works around blocked issues within existing grants. It checks approved auto-resume arrangements, without adding monitoring or buying capacity. In the morning, use `/swarm day`, then `/loose-ends good morning` for a brief. The brief never switches modes. Availability survives restarts, but the helper cannot keep an offline host running or prove a message was applied. See [day/night](skills/swarm/references/availability.md).
 

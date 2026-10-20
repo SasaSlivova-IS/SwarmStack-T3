@@ -4,6 +4,10 @@ The toolkit separates project management from controls for a running agent team.
 
 ## Language
 
+**Plain name**:
+A short everyday name for an issue, pull request, decision question, review or helper, followed by one or two sentences saying specifically what it covers. Identifiers may follow in parentheses.
+_Avoid_: Bare issue number, pull request number, question code, run number.
+
 **Swarm controls**:
 The user-facing interface for team direction, availability, progress, blockers, pause and resume, named /swarm.
 
