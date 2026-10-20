@@ -15,13 +15,13 @@ details{margin-top:14px;color:var(--muted-foreground);font-size:13px}summary{cur
 <div class="bar"><button id="all">Select all</button><button id="none">Clear</button>
 <button class="primary" id="copy" disabled>Copy selection (0)</button><button id="dl" disabled>Download .txt</button><span id="msg"></span></div>
 <h3>Can settle now</h3>
-<table class="pick"><thead><tr><th></th><th>Thread</th><th>Why (short)</th><th>Updated</th></tr></thead><tbody>
-<!-- ROWS_SETTLE, one per thread, escaped text, reason of at most 12 words:
+<table class="pick"><thead><tr><th></th><th>Thread</th><th>Why</th><th>Updated</th></tr></thead><tbody>
+<!-- ROWS_SETTLE, one per thread, escaped text, reason of two or three short sentences:
 <tr><td><input type="checkbox" data-id="THREAD_ID" data-t="TITLE"></td><td>TITLE</td><td>REASON</td><td class="muted">MM-DD HH:MM</td></tr> -->
 </tbody></table>
 <h3>Maybe, your call</h3>
 <table class="pick maybe"><tbody>
-<!-- ROWS_MAYBE, same row shape, reason of at most 8 words, unchecked -->
+<!-- ROWS_MAYBE, same row shape, reason of two short sentences, unchecked -->
 </tbody></table>
 <details><summary>Kept (N), not listed</summary><p><!-- KEPT: one sentence of groups, e.g. standing roles, running, held, open decisions --></p></details>
 <textarea id="out" readonly></textarea>

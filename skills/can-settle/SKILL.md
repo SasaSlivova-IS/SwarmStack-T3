@@ -28,8 +28,8 @@ Put a thread in **Maybe, your call** when it is finished-looking but one thing i
 
 Check it once with `html_preview`, then `html_render` with `page-template.html`. The page is the main table plus a short maybe list, nothing else:
 
-- **Can settle now:** thread title, a reason of at most 12 words, last update. Checkboxes, unchecked.
-- **Maybe, your call:** same shape, reason of at most 8 words, unchecked.
+- **Can settle now:** thread title, a reason of two or three short sentences (what it delivered, what closed it, why nothing is waiting on it), last update. Checkboxes, unchecked.
+- **Maybe, your call:** same shape, reason of two short sentences (what is finished and what is unclear), unchecked.
 - **Kept:** only a closed line with the count and the groups.
 
 No long sentences, no per-thread reasons for kept threads, no list of deviations or open questions on the page. After the page write at most two short lines: the counts, and how many threads you covered. Put any problem with the skill itself in one line, only if it changed the result. If `html_render` is unavailable, give the same two tables as Markdown.
