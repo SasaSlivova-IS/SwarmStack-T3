@@ -13,3 +13,5 @@ Build core behavior and existing CLI/tool surfaces before UI where applicable. V
 Continue authorised work until Done or a genuine blocker. Name the missing prerequisite, responsible owner and independent work available; do not ask the human to dispatch routine next steps.
 
 Keep your issue's status and checklist current under [tracking](tracking.md). At completion load [issue submission](submission-issue.md). Read returned findings fully, validate each claim, fix genuine material defects or rebut with evidence, and retest affected behavior. Keep original failures without duplicating entire histories.
+
+You own the "how". The "what" of your issue is written by Root (technically) and the user-facing thread (in the user's terms). Do not open top-level issues or rewrite the "what". Post your plan, findings and suggestions as signed comments on your issue; open a sub-issue only for work inside your own assignment. If you think the "what" is wrong, comment with evidence and let Root decide.
