@@ -12,7 +12,7 @@ Settling is organisation and bloat removal, and it is reversible: any thread can
 
 ## 1. Read (no changes)
 
-Scope: only **top-level threads of the project** (`parentThreadId` empty) that are unsettled and not archived. These are the threads in the user's sidebar. Helper, reviewer and other child threads never appear there, so never list them. Use `t3_thread_list` on the confirmed project (50 per page, newest update first) and keep paging until the unsettled top-level threads stop appearing, then read each one. Reading may be split across a few read-only helpers; keep their results out of the final text. For each thread read the end of it (its last messages), plus `t3_pending_request_list`, `t3_queue_list` and its children.
+Scope: only the **lead threads** the user sees in the project sidebar: top-level threads (`parentThreadId` empty) that are unsettled and not archived. Subagents (child threads) are displayed differently in T3 and do not clutter the sidebar, so ignore them completely and never list them. Use `t3_thread_list` on the confirmed project (50 per page, newest update first) and keep paging until unsettled top-level threads stop appearing, then read each one. Reading may be split across a few read-only helpers; keep their results out of the final text. For each lead thread read the end of it (its last messages), plus `t3_pending_request_list`, `t3_queue_list` and whether it has running subagents.
 
 Settling is reversible organisation, so the user decides. Sort each thread into one group:
 
