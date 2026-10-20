@@ -38,7 +38,7 @@ A small Python script keeps track of these commands in a local SQLite file, so t
 
 Lost track? `/loose-ends cover` goes back through the current conversation and lists unanswered questions, offers nobody confirmed, contradictions and missing pieces. `/loose-ends catchup` catches you up on the whole project after time away, and `/loose-ends good morning` covers the night since your last message. Neither changes anything; open decisions come back as A–D questions.
 
-Too many finished threads? `/can-settle` lists which threads can be settled and which should stay, with a reason for each. It only reports; settling happens only after you say yes.
+Too many finished threads? `/can-settle` looks only at the lead threads in your sidebar and shows a checklist: which can be settled now, which are your call, and what each of the rest needs and from whom. You tick, copy the selection and paste it back; the orchestrator then settles them itself. It only reads until you paste a selection.
 
 Before leaving, use `/swarm night` for an overnight handoff. Root keeps questions in your chat and works around blocked issues within existing grants. It checks approved auto-resume arrangements, without adding monitoring or buying capacity. In the morning, use `/swarm day`, then `/loose-ends good morning` for a brief. The brief never switches modes. Availability survives restarts, but the helper cannot keep an offline host running or prove a message was applied. See [day/night](skills/swarm/references/availability.md).
 
