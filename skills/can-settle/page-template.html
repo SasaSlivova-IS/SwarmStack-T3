@@ -14,7 +14,8 @@ details{margin-top:14px;color:var(--muted-foreground);font-size:13px}summary{cur
 </style></head><body>
 <div class="bar"><button id="all">Select all</button><button id="none">Clear</button>
 <button class="primary" id="copy" disabled>Copy selection (0)</button><button id="dl" disabled>Download .txt</button><span id="msg"></span></div>
-<h3>Looks finished</h3>
+<p id="sum" class="muted"><!-- SUMMARY: one sentence, e.g. You can clear N of M sidebar threads; K are your call; the rest need something. --></p>
+<h3>Can settle</h3>
 <table class="pick"><thead><tr><th></th><th>Thread</th><th>Why</th><th>Updated</th></tr></thead><tbody>
 <!-- ROWS_SETTLE, one per thread, escaped text, reason of two or three short sentences:
 <tr><td><input type="checkbox" data-id="THREAD_ID" data-t="TITLE"></td><td>TITLE</td><td>REASON</td><td class="muted">MM-DD HH:MM</td></tr> -->
@@ -23,7 +24,10 @@ details{margin-top:14px;color:var(--muted-foreground);font-size:13px}summary{cur
 <table class="pick maybe"><tbody>
 <!-- ROWS_MAYBE, same row shape, reason of two short sentences, unchecked -->
 </tbody></table>
-<details><summary>Kept (N), not listed</summary><p><!-- KEPT: one sentence of groups, e.g. standing roles, running, held, open decisions --></p></details>
+<h3>Needs attention</h3>
+<table class="attn"><tbody>
+<!-- ROWS_NEEDS: <tr><td style="width:28px"></td><td>TITLE</td><td class="why">WHAT IT NEEDS AND FROM WHOM</td><td class="muted">MM-DD HH:MM</td></tr> -->
+</tbody></table>
 <textarea id="out" readonly></textarea>
 <script>
 const boxes=[...document.querySelectorAll('.pick input')];const copy=document.getElementById('copy'),dl=document.getElementById('dl'),msg=document.getElementById('msg'),out=document.getElementById('out');
